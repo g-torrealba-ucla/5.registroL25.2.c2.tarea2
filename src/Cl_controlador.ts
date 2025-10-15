@@ -1,5 +1,5 @@
-import Cl_mEquipo from "./Cl_mEquipo.js";
-import Cl_mEquipos, { iIntegrantes } from "./Cl_mEquipos.js";
+import Cl_mEquipo, { iEquipo } from "./Cl_mEquipo.js";
+import Cl_mEquipos from "./Cl_mEquipos.js";
 import Cl_vEquipo from "./Cl_vEquipo.js";
 
 export default class Cl_controlador {
@@ -9,16 +9,21 @@ export default class Cl_controlador {
     this.modelo = modelo;
     this.vista = vista;
   }
-  registrarIntegrantes({
-    integrantes,
-    callback
+  registrarEquipo({
+    equipo,
+    callback,
   }: {
-    integrantes: iIntegrantes;
+    equipo: iEquipo;
     callback: Function;
   }): void {
     this.modelo.registrarEquipo({
-      integrantes,
-      callback
-    });    
+      equipo,
+      callback,
+    });
+  }
+  infoEquipos(callback: Function) {
+    this.modelo.infoEquipos((error: string | false, equipos: iEquipo[]) => {
+      callback({ error, equipos });
+    });
   }
 }

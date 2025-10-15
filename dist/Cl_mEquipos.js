@@ -5,25 +5,37 @@ export default class Cl_mEquipos {
         this.db = new Cl_dcytDb({ aliasCuenta: "PROFESOR" });
         this.equipos = [];
     }
-    registrarEquipo({ integrantes, callback, }) {
+    registrarEquipo({ equipo, callback, }) {
         this.cargarEquipos((error) => {
             if (error)
                 throw new Error(error);
-            else
-                this.db.addRecord({
-                    tabla: "equipos",
-                    object: integrantes,
-                    callback: ({ error }) => {
-                        if (error)
-                            throw new Error(error);
-                        callback === null || callback === void 0 ? void 0 : callback(error);
-                    },
-                });
+            else {
+                if (this.equipos.find((eq) => eq.nombre === equipo.nombre))
+                    callback("El equipo ya se encuentra registrado");
+                else
+                    this.db.addRecord({
+                        tabla: "eqs.L25.2.c2.tarea2",
+                        object: equipo,
+                        callback: ({ error }) => {
+                            if (error)
+                                throw new Error(error);
+                            callback === null || callback === void 0 ? void 0 : callback(error);
+                        },
+                    });
+            }
+        });
+    }
+    infoEquipos(callback) {
+        this.cargarEquipos((error) => {
+            let equipos = [];
+            if (!error)
+                this.equipos.map((equipo) => equipos.push(equipo.toJSON()));
+            callback(error, equipos);
         });
     }
     cargarEquipos(callback) {
         this.db.listRecords({
-            tabla: "equipos",
+            tabla: "eqs.L25.2.c2.tarea2",
             callback: ({ objects, error }) => {
                 if (error)
                     throw new Error(error);

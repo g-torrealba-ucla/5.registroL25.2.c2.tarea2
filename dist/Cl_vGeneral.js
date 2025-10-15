@@ -3,6 +3,7 @@ export default class Cl_vGeneral {
         this._formName = "";
         this._vista = null;
         this._controlador = null;
+        this.objects = [];
         this.formName = formName;
         this.vista = this.crearHTMLElement(this.formName, { isForm: true });
     }
@@ -24,7 +25,13 @@ export default class Cl_vGeneral {
     get controlador() {
         return this._controlador;
     }
-    crearHTMLElement(elementName, { isForm = false } = { isForm: false }) {
+    refresh() {
+        this.objects.forEach((element) => element.refresh());
+    }
+    crearHTMLElement(elementName, { isForm = false, refresh = () => { }, } = {
+        isForm: false,
+        refresh: () => { },
+    }) {
         let domElementName = isForm
             ? elementName
             : `${this.formName}_${elementName}`;
@@ -34,9 +41,14 @@ export default class Cl_vGeneral {
             alert(msg);
             throw new Error(msg);
         }
+        domElement.refresh = refresh;
+        this.objects.push(domElement);
         return domElement;
     }
-    crearHTMLInputElement(elementName) {
+    crearHTMLInputElement(elementName, { onchange = () => { }, refresh = () => { }, } = {
+        onchange: () => { },
+        refresh: () => { },
+    }) {
         let domElementName = `${this.formName}_${elementName}`;
         let domElement = document.getElementById(domElementName);
         if (!domElement) {
@@ -44,9 +56,15 @@ export default class Cl_vGeneral {
             alert(msg);
             throw new Error(msg);
         }
+        domElement.onchange = onchange;
+        domElement.refresh = refresh;
+        this.objects.push(domElement);
         return domElement;
     }
-    crearHTMLButtonElement(elementName, { onclick }) {
+    crearHTMLButtonElement(elementName, { onclick = () => { }, refresh = () => { }, } = {
+        onclick: () => { },
+        refresh: () => { },
+    }) {
         let domElementName = `${this.formName}_${elementName}`;
         let domElement = document.getElementById(domElementName);
         if (!domElement) {
@@ -54,11 +72,16 @@ export default class Cl_vGeneral {
             alert(msg);
             throw new Error(msg);
         }
-        if (onclick)
-            domElement.onclick = onclick;
+        domElement.onclick = onclick;
+        domElement.refresh = refresh;
+        this.objects.push(domElement);
         return domElement;
     }
-    crearHTMLSelectElement(elementName, { onchange }) {
+    crearHTMLSelectElement(elementName, { elements = [], onchange = () => { }, refresh = () => { }, } = {
+        elements: [],
+        onchange: () => { },
+        refresh: () => { },
+    }) {
         let domElementName = `${this.formName}_${elementName}`;
         let domElement = document.getElementById(domElementName);
         if (!domElement) {
@@ -66,8 +89,17 @@ export default class Cl_vGeneral {
             alert(msg);
             throw new Error(msg);
         }
-        if (onchange)
-            domElement.onchange = onchange;
+        if (elements) {
+            for (let i = 0; i < elements.length; i++) {
+                let option = document.createElement("option");
+                option.value = elements[i];
+                option.text = elements[i];
+                domElement.add(option);
+            }
+        }
+        domElement.onchange = onchange;
+        domElement.refresh = refresh;
+        this.objects.push(domElement);
         return domElement;
     }
     show({ ver = true } = { ver: true }) {
