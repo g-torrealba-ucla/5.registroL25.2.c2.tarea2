@@ -37,10 +37,10 @@ td {
   border: 1px solid black;
   text-align: center;
 }
-#equipoForm {
+#infoActividadForm {
   display: flex;
   flex-direction: column;
-  align-items: end;
+  align-items: start;
   width: 250px;
 }
 #mainForm {

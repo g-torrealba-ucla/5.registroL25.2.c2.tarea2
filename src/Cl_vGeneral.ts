@@ -1,5 +1,16 @@
 import Cl_controlador from "./Cl_controlador.js";
-
+declare global {
+  interface HTMLElement {
+    refresh: () => void;
+  }
+}
+export const tHTMLElement = {
+  CONTAINER: "container",
+  INPUT: "input",
+  SELECT: "select",
+  BUTTON: "button",
+};
+Object.freeze(tHTMLElement);
 export default class Cl_vGeneral {
   private _formName: string = "";
   private _vista: HTMLElement | null = null;
@@ -35,45 +46,35 @@ export default class Cl_vGeneral {
     elementName: string,
     {
       isForm = false,
-      refresh = () => {},
-    }: {
-      isForm?: boolean;
-      refresh?: () => void;
-    } = {
-      isForm: false,
-      refresh: () => {},
-    }
-  ): HTMLElement {
-    let domElementName = isForm
-      ? elementName
-      : `${this.formName}_${elementName}`;
-    let domElement = document.getElementById(domElementName) as HTMLElement;
-    if (!domElement) {
-      let msg = `Elemento ${domElementName} no encontrado`;
-      alert(msg);
-      throw new Error(msg);
-    }
-    domElement.refresh = refresh;
-    this.objects.push(domElement);
-    return domElement;
-  }
-  crearHTMLInputElement(
-    elementName: string,
-    {
+      type = tHTMLElement.CONTAINER,
+      onclick,
       onchange = () => {},
       refresh = () => {},
     }: {
+      isForm?: boolean;
+      type?: string;
+      onclick?: () => void;
       onchange?: () => void;
       refresh?: () => void;
     } = {
+      isForm: false,
+      type: tHTMLElement.CONTAINER,
+      onclick: () => {},
       onchange: () => {},
       refresh: () => {},
     }
-  ): HTMLInputElement {
-    let domElementName = `${this.formName}_${elementName}`;
-    let domElement = document.getElementById(
-      domElementName
-    ) as HTMLInputElement;
+  ): HTMLElement | HTMLInputElement | HTMLButtonElement | HTMLSelectElement {
+    let domElementName = isForm
+        ? elementName
+        : `${this.formName}_${elementName}`,
+      domElement;
+    if (type === tHTMLElement.INPUT)
+      domElement = document.getElementById(domElementName) as HTMLInputElement;
+    else if (type === tHTMLElement.SELECT)
+      domElement = document.getElementById(domElementName) as HTMLSelectElement;
+    else if (type === tHTMLElement.BUTTON)
+      domElement = document.getElementById(domElementName) as HTMLButtonElement;
+    else domElement = document.getElementById(domElementName) as HTMLElement;
     if (!domElement) {
       let msg = `Elemento ${domElementName} no encontrado`;
       alert(msg);
@@ -83,6 +84,30 @@ export default class Cl_vGeneral {
     domElement.refresh = refresh;
     this.objects.push(domElement);
     return domElement;
+  }
+  crearHTMLInputElement(
+    elementName: string,
+    {
+      oninput = () => {},
+      onchange = () => {},
+      refresh = () => {},
+    }: {
+      oninput?: () => void;
+      onchange?: () => void;
+      refresh?: () => void;
+    } = {
+      oninput: () => {},
+      onchange: () => {},
+      refresh: () => {},
+    }
+  ): HTMLInputElement {
+    let domElement = this.crearHTMLElement(elementName, {
+      type: tHTMLElement.INPUT,
+      onchange,
+      refresh,
+    });
+    domElement.oninput = oninput;
+    return domElement as HTMLInputElement;
   }
   crearHTMLButtonElement(
     elementName: string,
@@ -97,19 +122,12 @@ export default class Cl_vGeneral {
       refresh: () => {},
     }
   ): HTMLButtonElement {
-    let domElementName = `${this.formName}_${elementName}`;
-    let domElement = document.getElementById(
-      domElementName
-    ) as HTMLButtonElement;
-    if (!domElement) {
-      let msg = `Elemento ${domElementName} no encontrado`;
-      alert(msg);
-      throw new Error(msg);
-    }
-    domElement.onclick = onclick;
-    domElement.refresh = refresh;
-    this.objects.push(domElement);
-    return domElement;
+    let domElement = this.crearHTMLElement(elementName, {
+      type: tHTMLElement.BUTTON,
+      onclick,
+      refresh,
+    });
+    return domElement as HTMLButtonElement;
   }
   crearHTMLSelectElement(
     elementName: string,
@@ -127,26 +145,18 @@ export default class Cl_vGeneral {
       refresh: () => {},
     }
   ): HTMLSelectElement {
-    let domElementName = `${this.formName}_${elementName}`;
-    let domElement = document.getElementById(
-      domElementName
-    ) as HTMLSelectElement;
-    if (!domElement) {
-      let msg = `Elemento ${domElementName} no encontrado`;
-      alert(msg);
-      throw new Error(msg);
-    }
+    let domElement = this.crearHTMLElement(elementName, {
+      type: tHTMLElement.SELECT,
+      onchange,
+      refresh,
+    }) as HTMLSelectElement;
     if (elements) {
       for (let i = 0; i < elements.length; i++) {
         let option = document.createElement("option");
-        option.value = elements[i];
-        option.text = elements[i];
+        option.value = option.text = elements[i];
         domElement.add(option);
       }
     }
-    domElement.onchange = onchange;
-    domElement.refresh = refresh;
-    this.objects.push(domElement);
     return domElement;
   }
   show({ ver = true }: { ver?: boolean } = { ver: true }): void {

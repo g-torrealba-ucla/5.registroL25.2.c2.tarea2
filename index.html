@@ -4,52 +4,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Datos para la defensa</title>
+    <title>Gestión de Actividades</title>
     <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-    <h3 style="width: 270px;">REGISTRO DE TAREA</h3>
-    <h4>Para el jueves 16-octubre-2025</h4>
-    <h4>Deben enviar esta info sólo 1 vez</h4>
-    <section id="equipoForm">
-        <h3 style="width: 250px;">Información del Equipo<span id="equipoForm_lblTipo"></span></h3>
-        <label style="margin-bottom: 20px;">Nombre:
-            <select id="equipoForm_selNombre">
+    <h3 style="width: 270px;">GESTIÓN DE ACTIVIDADES</h3>
+    <section id="infoActividadForm">
+        <label>Actividad:
+            <select id="infoActividadForm_selNombre">
                 <option value="">-- Selecciona --</option>
             </select>
         </label>
-        <h4>Cédulas de los integrantes:</h4>
-        <label>Líder:
-            <input type="number" id="equipoForm_inLider"></input>
+        <div style="margin-bottom: 20px;">
+            <button id="infoActividadForm_btNueva">Nueva</button>
+            <button id="infoActividadForm_btAsistencia">Asistencia</button>
+            <button id="infoActividadForm_btEliminar">Eliminar</button>
+        </div>
+        <label><b>Nombre</b>:
+            <span id="infoActividadForm_lblNombre">??</span>
         </label>
-        <label>Cédula 2:
-            <input type="number" id="equipoForm_inCedula2"></input>
+        <label><b>Fecha</b>:
+            <span id="infoActividadForm_lblFecha">__/__/____</span>
         </label>
-        <label>Cédula 3:
-            <input type="number" id="equipoForm_inCedula3"></input>
+        <label><b>Descripción</b>:
+            <span id="infoActividadForm_lblDescripcion">??</span>
         </label>
-        <label>Cédula 4:
-            <input type="number" id="equipoForm_inCedula4"></input>
+        <label><b>Estado</b>:
+            <span id="infoActividadForm_lblEstado">??</span>
         </label>
-        <label>Cédula 5:
-            <input type="number" id="equipoForm_inCedula5"></input>
-        </label>
-        <h4 style="margin-top: 20px;">Proyectos que revisará mañana:</h4>
-        <h4>(Indique al menos 1)</h4>
-        <label>Proyecto A:
-            <select id="equipoForm_selProyectoA">
-                <option value="">-- Selecciona --</option>
-            </select>
-        </label>
-        <label>Proyecto B:
-            <select id="equipoForm_selProyectoB">
-                <option value="">-- Selecciona --</option>
-            </select>
+        <label><b>Participantes (</b> 
+            <span id="infoActividadForm_lblParticipantes">??</span>
+            <b>):</b>
         </label>
         <div>
-            <button id="equipoForm_btRegistrarEquipo">Registrar equipo</button>
-            <button id="equipoForm_btEquipos">Equipos</button>
         </div>
     </section>
     <script type="module">

@@ -1,3 +1,10 @@
+export const tHTMLElement = {
+    CONTAINER: "container",
+    INPUT: "input",
+    SELECT: "select",
+    BUTTON: "button",
+};
+Object.freeze(tHTMLElement);
 export default class Cl_vGeneral {
     constructor({ formName }) {
         this._formName = "";
@@ -28,29 +35,24 @@ export default class Cl_vGeneral {
     refresh() {
         this.objects.forEach((element) => element.refresh());
     }
-    crearHTMLElement(elementName, { isForm = false, refresh = () => { }, } = {
+    crearHTMLElement(elementName, { isForm = false, type = tHTMLElement.CONTAINER, onclick, onchange = () => { }, refresh = () => { }, } = {
         isForm: false,
+        type: tHTMLElement.CONTAINER,
+        onclick: () => { },
+        onchange: () => { },
         refresh: () => { },
     }) {
         let domElementName = isForm
             ? elementName
-            : `${this.formName}_${elementName}`;
-        let domElement = document.getElementById(domElementName);
-        if (!domElement) {
-            let msg = `Elemento ${domElementName} no encontrado`;
-            alert(msg);
-            throw new Error(msg);
-        }
-        domElement.refresh = refresh;
-        this.objects.push(domElement);
-        return domElement;
-    }
-    crearHTMLInputElement(elementName, { onchange = () => { }, refresh = () => { }, } = {
-        onchange: () => { },
-        refresh: () => { },
-    }) {
-        let domElementName = `${this.formName}_${elementName}`;
-        let domElement = document.getElementById(domElementName);
+            : `${this.formName}_${elementName}`, domElement;
+        if (type === tHTMLElement.INPUT)
+            domElement = document.getElementById(domElementName);
+        else if (type === tHTMLElement.SELECT)
+            domElement = document.getElementById(domElementName);
+        else if (type === tHTMLElement.BUTTON)
+            domElement = document.getElementById(domElementName);
+        else
+            domElement = document.getElementById(domElementName);
         if (!domElement) {
             let msg = `Elemento ${domElementName} no encontrado`;
             alert(msg);
@@ -61,20 +63,28 @@ export default class Cl_vGeneral {
         this.objects.push(domElement);
         return domElement;
     }
+    crearHTMLInputElement(elementName, { oninput = () => { }, onchange = () => { }, refresh = () => { }, } = {
+        oninput: () => { },
+        onchange: () => { },
+        refresh: () => { },
+    }) {
+        let domElement = this.crearHTMLElement(elementName, {
+            type: tHTMLElement.INPUT,
+            onchange,
+            refresh,
+        });
+        domElement.oninput = oninput;
+        return domElement;
+    }
     crearHTMLButtonElement(elementName, { onclick = () => { }, refresh = () => { }, } = {
         onclick: () => { },
         refresh: () => { },
     }) {
-        let domElementName = `${this.formName}_${elementName}`;
-        let domElement = document.getElementById(domElementName);
-        if (!domElement) {
-            let msg = `Elemento ${domElementName} no encontrado`;
-            alert(msg);
-            throw new Error(msg);
-        }
-        domElement.onclick = onclick;
-        domElement.refresh = refresh;
-        this.objects.push(domElement);
+        let domElement = this.crearHTMLElement(elementName, {
+            type: tHTMLElement.BUTTON,
+            onclick,
+            refresh,
+        });
         return domElement;
     }
     crearHTMLSelectElement(elementName, { elements = [], onchange = () => { }, refresh = () => { }, } = {
@@ -82,24 +92,18 @@ export default class Cl_vGeneral {
         onchange: () => { },
         refresh: () => { },
     }) {
-        let domElementName = `${this.formName}_${elementName}`;
-        let domElement = document.getElementById(domElementName);
-        if (!domElement) {
-            let msg = `Elemento ${domElementName} no encontrado`;
-            alert(msg);
-            throw new Error(msg);
-        }
+        let domElement = this.crearHTMLElement(elementName, {
+            type: tHTMLElement.SELECT,
+            onchange,
+            refresh,
+        });
         if (elements) {
             for (let i = 0; i < elements.length; i++) {
                 let option = document.createElement("option");
-                option.value = elements[i];
-                option.text = elements[i];
+                option.value = option.text = elements[i];
                 domElement.add(option);
             }
         }
-        domElement.onchange = onchange;
-        domElement.refresh = refresh;
-        this.objects.push(domElement);
         return domElement;
     }
     show({ ver = true } = { ver: true }) {

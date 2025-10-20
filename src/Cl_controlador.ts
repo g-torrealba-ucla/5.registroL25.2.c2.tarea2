@@ -1,11 +1,11 @@
-import Cl_mEquipo, { iEquipo } from "./Cl_mEquipo.js";
-import Cl_mEquipos from "./Cl_mEquipos.js";
-import Cl_vEquipo from "./Cl_vEquipo.js";
+import Cl_mEquipo, { iEquipo } from "./Cl_mActividad.js";
+import Cl_mActividades from "./Cl_mActividades.js";
+import Cl_vActividades from "./Cl_vActividades.js";
 
 export default class Cl_controlador {
-  public modelo: Cl_mEquipos;
-  public vista: Cl_vEquipo;
-  constructor(modelo: Cl_mEquipos, vista: Cl_vEquipo) {
+  public modelo: Cl_mActividades;
+  public vista: Cl_vActividades;
+  constructor(modelo: Cl_mActividades, vista: Cl_vActividades) {
     this.modelo = modelo;
     this.vista = vista;
   }

@@ -1,12 +1,9 @@
-import dtEquipos from "./_dtEquipos.js";
-import dtProyectos from "./_dtProyectos.js";
 import Cl_mEquipo from "./Cl_mActividad.js";
 import Cl_vGeneral from "./Cl_vGeneral.js";
 export default class Cl_vActividades extends Cl_vGeneral {
     constructor() {
         super({ formName: "equipoForm" });
         this.selNombre = this.crearHTMLSelectElement("selNombre", {
-            elements: dtEquipos,
             onchange: () => {
                 this.equipo.nombre = this.selNombre.value;
                 this.refresh();
@@ -30,53 +27,6 @@ export default class Cl_vActividades extends Cl_vGeneral {
                 this.equipo.cedula2 = this.cedula2;
                 this.refresh();
             },
-        });
-        this.inCedula3 = this.crearHTMLInputElement("inCedula3", {
-            refresh: () => (this.inCedula3.style.borderColor = this.equipo.cedula3
-                ? "aqua"
-                : "red"),
-            onchange: () => {
-                this.equipo.cedula3 = this.cedula3;
-                this.refresh();
-            },
-        });
-        this.inCedula4 = this.crearHTMLInputElement("inCedula4", {
-            refresh: () => (this.inCedula4.style.borderColor = this.equipo.cedula4
-                ? "aqua"
-                : "red"),
-            onchange: () => {
-                this.equipo.cedula4 = this.cedula4;
-                this.refresh();
-            },
-        });
-        this.inCedula5 = this.crearHTMLInputElement("inCedula5", {
-            refresh: () => (this.inCedula5.style.borderColor = this.equipo.cedula5
-                ? "aqua"
-                : "red"),
-            onchange: () => {
-                this.equipo.cedula5 = this.cedula5;
-                this.refresh();
-            },
-        });
-        this.selProyectoA = this.crearHTMLSelectElement("selProyectoA", {
-            elements: dtProyectos,
-            onchange: () => {
-                this.equipo.proyectoA = this.selProyectoA.value;
-                this.refresh();
-            },
-            refresh: () => (this.selProyectoA.style.borderColor = this.equipo.proyectoA
-                ? "aqua"
-                : "red"),
-        });
-        this.selProyectoB = this.crearHTMLSelectElement("selProyectoB", {
-            elements: dtProyectos,
-            onchange: () => {
-                this.equipo.proyectoB = this.selProyectoB.value;
-                this.refresh();
-            },
-            refresh: () => (this.selProyectoB.style.borderColor = this.equipo.proyectoB
-                ? "aqua"
-                : "red"),
         });
         this.btRegistrarEquipo = this.crearHTMLButtonElement("btRegistrarEquipo", {
             onclick: () => {
