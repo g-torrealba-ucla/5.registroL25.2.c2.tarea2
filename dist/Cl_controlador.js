@@ -3,15 +3,18 @@ export default class Cl_controlador {
         this.modelo = modelo;
         this.vista = vista;
     }
-    registrarEquipo({ equipo, callback, }) {
-        this.modelo.registrarEquipo({
-            equipo,
+    nuevaActividad({ actividad, callback, }) {
+        this.modelo.add({
+            actividad,
             callback,
         });
     }
-    infoEquipos(callback) {
-        this.modelo.infoEquipos((error, equipos) => {
-            callback({ error, equipos });
-        });
+    actividad(index) {
+        return this.modelo.actividades[index];
+    }
+    infoActividades() {
+        let actividades = [];
+        this.modelo.actividades.map((actividad) => actividades.push(actividad.toJSON()));
+        return actividades;
     }
 }

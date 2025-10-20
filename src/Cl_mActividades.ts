@@ -12,12 +12,14 @@ interface iResultObjects {
 
 export default class Cl_mActividades {
   public actividades: Cl_mActividad[];
-  public db: Cl_dcytDb;
-  constructor() {
+  private db: Cl_dcytDb;
+  readonly tbActividades: string = "L25.2.actividades";
+  constructor(callback: Function) {
     this.db = new Cl_dcytDb({ aliasCuenta: "PROFESOR" });
     this.actividades = [];
+    this.cargar((error: string | false) => callback(error));
   }
-  actividadAdd({
+  add({
     actividad,
     callback,
   }: {
@@ -25,33 +27,24 @@ export default class Cl_mActividades {
     callback: Function;
   }): void {
     this.db.addRecord({
-      tabla: "L25.2.actividades",
+      tabla: this.tbActividades,
       object: actividad,
       callback: ({ error }: iResultObject) => {
         if (error) throw new Error(error);
+        this.actividades.push(new Cl_mActividad(actividad));
         callback?.(error);
       },
     });
   }
-  infoActividades(callback: Function): void {
-    this.cargarActividades((error: string | false) => {
-      let actividades: Cl_mActividad[] = [];
-      if (!error)
-        this.actividades.map((actividad) =>
-          actividades.push(new Cl_mActividad(actividad))
-        );
-      callback(error, actividades);
-    });
-  }
-  cargarActividades(callback: Function): void {
+  cargar(callback: Function): void {
     this.db.listRecords({
-      tabla: "L25.2.actividades",
+      tabla: this.tbActividades,
       callback: ({ objects, error }: iResultObjects) => {
         if (error) throw new Error(error);
         else {
           this.actividades = [];
-          objects?.map((equipo) =>
-            this.actividades.push(new Cl_mActividad(equipo))
+          objects?.map((actividad) =>
+            this.actividades.push(new Cl_mActividad(actividad))
           );
           callback?.(error);
         }

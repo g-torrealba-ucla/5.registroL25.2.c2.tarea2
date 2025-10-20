@@ -8,12 +8,16 @@ export var estadoActividad;
     estadoActividad["CANCELADA"] = "Cancelada";
 })(estadoActividad || (estadoActividad = {}));
 export default class Cl_mActividad {
-    constructor({ nombre, fecha, descripcion, estado } = {
+    constructor({ id, creadoEl, nombre, fecha, descripcion, estado = estadoActividad.PENDIENTE, } = {
+        id: null,
+        creadoEl: null,
         nombre: "",
         fecha: formatearFecha(new Date()),
         descripcion: "",
         estado: estadoActividad.PENDIENTE,
     }) {
+        this._id = null;
+        this._creadoEl = null;
         this._nombre = "";
         this._fecha = formatearFecha(new Date());
         this._descripcion = "";
@@ -23,8 +27,20 @@ export default class Cl_mActividad {
         this.descripcion = descripcion;
         this.estado = estado;
     }
+    set id(id) {
+        this._id = id ? +id : null;
+    }
+    get id() {
+        return this._id;
+    }
+    set creadoEl(creadoEl) {
+        this._creadoEl = creadoEl;
+    }
+    get creadoEl() {
+        return this._creadoEl;
+    }
     set nombre(nombre) {
-        this._nombre = nombre;
+        this._nombre = nombre.trim();
     }
     get nombre() {
         return this._nombre;
@@ -36,11 +52,9 @@ export default class Cl_mActividad {
         return this._fecha;
     }
     set descripcion(descripcion) {
-        this._descripcion = descripcion;
+        this._descripcion = descripcion.trim();
     }
     get descripcion() {
-        if (this._descripcion === "")
-            return false;
         return this._descripcion;
     }
     set estado(estado) {
@@ -51,6 +65,8 @@ export default class Cl_mActividad {
     }
     toJSON() {
         return {
+            id: this._id,
+            creadoEl: this._creadoEl,
             nombre: this._nombre,
             fecha: this._fecha,
             descripcion: this._descripcion,

@@ -9,6 +9,7 @@ export const tHTMLElement = {
   INPUT: "input",
   SELECT: "select",
   BUTTON: "button",
+  LABEL: "label",
 };
 Object.freeze(tHTMLElement);
 export default class Cl_vGeneral {
@@ -47,7 +48,7 @@ export default class Cl_vGeneral {
     {
       isForm = false,
       type = tHTMLElement.CONTAINER,
-      onclick,
+      onclick = () => {},
       onchange = () => {},
       refresh = () => {},
     }: {
@@ -63,7 +64,12 @@ export default class Cl_vGeneral {
       onchange: () => {},
       refresh: () => {},
     }
-  ): HTMLElement | HTMLInputElement | HTMLButtonElement | HTMLSelectElement {
+  ):
+    | HTMLElement
+    | HTMLInputElement
+    | HTMLButtonElement
+    | HTMLSelectElement
+    | HTMLLabelElement {
     let domElementName = isForm
         ? elementName
         : `${this.formName}_${elementName}`,
@@ -74,12 +80,15 @@ export default class Cl_vGeneral {
       domElement = document.getElementById(domElementName) as HTMLSelectElement;
     else if (type === tHTMLElement.BUTTON)
       domElement = document.getElementById(domElementName) as HTMLButtonElement;
+    else if (type === tHTMLElement.LABEL)
+      domElement = document.getElementById(domElementName) as HTMLLabelElement;
     else domElement = document.getElementById(domElementName) as HTMLElement;
     if (!domElement) {
       let msg = `Elemento ${domElementName} no encontrado`;
       alert(msg);
       throw new Error(msg);
     }
+    domElement.onclick = onclick;
     domElement.onchange = onchange;
     domElement.refresh = refresh;
     this.objects.push(domElement);
@@ -133,14 +142,20 @@ export default class Cl_vGeneral {
     elementName: string,
     {
       elements = [],
+      valueAttributeName = null,
+      textAttributeName = null,
       onchange = () => {},
       refresh = () => {},
     }: {
-      elements?: string[];
+      elements?: any[];
+      valueAttributeName?: string | null;
+      textAttributeName?: string | null;
       onchange?: () => void;
       refresh?: () => void;
     } = {
       elements: [],
+      valueAttributeName: null,
+      textAttributeName: null,
       onchange: () => {},
       refresh: () => {},
     }
@@ -153,7 +168,12 @@ export default class Cl_vGeneral {
     if (elements) {
       for (let i = 0; i < elements.length; i++) {
         let option = document.createElement("option");
-        option.value = option.text = elements[i];
+        option.value = valueAttributeName
+          ? elements[i][valueAttributeName]
+          : elements[i];
+        option.text = textAttributeName
+          ? elements[i][textAttributeName]
+          : elements[i];
         domElement.add(option);
       }
     }

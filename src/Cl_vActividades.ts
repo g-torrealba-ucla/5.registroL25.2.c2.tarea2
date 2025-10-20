@@ -1,134 +1,70 @@
-import Cl_mEquipo, { iEquipo } from "./Cl_mActividad.js";
-import Cl_vGeneral from "./Cl_vGeneral.js";
+import Cl_mActividad, { iActividad } from "./Cl_mActividad.js";
+import Cl_vGeneral, { tHTMLElement } from "./Cl_vGeneral.js";
 
 export default class Cl_vActividades extends Cl_vGeneral {
-  private selNombre: HTMLSelectElement;
-  private inLider: HTMLInputElement;
-  private inCedula2: HTMLInputElement;
-  private inCedula3: HTMLInputElement;
-  private inCedula4: HTMLInputElement;
-  private inCedula5: HTMLInputElement;
-  private selProyectoA: HTMLSelectElement;
-  private selProyectoB: HTMLSelectElement;
-  private btRegistrarEquipo: HTMLButtonElement;
-  private btEquipos: HTMLButtonElement;
-  private equipo: Cl_mEquipo;
+  private selActividad: HTMLSelectElement;
+  private btNueva: HTMLButtonElement;
+  private lblNombre: HTMLLabelElement;
+  private lblFecha: HTMLLabelElement;
+  private lblDescripcion: HTMLLabelElement;
+  private lblEstado: HTMLLabelElement;
+  private lblCntParticipantes: HTMLLabelElement;
+  private actividad: Cl_mActividad;
   constructor() {
-    super({ formName: "equipoForm" });
-    this.selNombre = this.crearHTMLSelectElement("selNombre", {
+    super({ formName: "infoActividadForm" });
+    this.selActividad = this.crearHTMLSelectElement("selActividad", {
+      elements: this.controlador?.infoActividades(),
+      valueAttributeName: "id",
+      textAttributeName: "nombre",
       onchange: () => {
-        this.equipo.nombre = this.selNombre.value;
-        this.refresh();
-      },
-      refresh: () =>
-        (this.selNombre.style.borderColor = this.equipo.nombre
-          ? "aqua"
-          : "red"),
-    });
-    this.inLider = this.crearHTMLInputElement("inLider", {
-      refresh: () =>
-        (this.inLider.style.borderColor = this.equipo.lider ? "aqua" : "red"),
-      onchange: () => {
-        this.equipo.lider = this.lider;
+        this.actividad.nombre = this.selActividad.value;
         this.refresh();
       },
     });
-    this.inCedula2 = this.crearHTMLInputElement("inCedula2", {
+    this.lblNombre = this.crearHTMLElement("lblNombre", {
+      type: tHTMLElement.LABEL,
+      refresh: () => (this.lblNombre.innerHTML = this.actividad.nombre),
+    }) as HTMLLabelElement;
+    this.lblFecha = this.crearHTMLElement("lblFecha", {
+      type: tHTMLElement.LABEL,
+      refresh: () => (this.lblFecha.innerHTML = this.actividad.fecha),
+    }) as HTMLLabelElement;
+    this.lblDescripcion = this.crearHTMLElement("lblDescripcion", {
+      type: tHTMLElement.LABEL,
       refresh: () =>
-        (this.inCedula2.style.borderColor = this.equipo.cedula2
-          ? "aqua"
-          : "red"),
-      onchange: () => {
-        this.equipo.cedula2 = this.cedula2;
-        this.refresh();
-      },
-    });
-    this.btRegistrarEquipo = this.crearHTMLButtonElement("btRegistrarEquipo", {
+        (this.lblDescripcion.innerHTML = this.actividad.descripcion),
+    }) as HTMLLabelElement;
+    this.lblEstado = this.crearHTMLElement("lblEstado", {
+      type: tHTMLElement.LABEL,
+      refresh: () => (this.lblEstado.innerHTML = this.actividad.estado),
+    }) as HTMLLabelElement;
+    this.lblCntParticipantes = this.crearHTMLElement("lblCntParticipantes", {
+      type: tHTMLElement.LABEL,
+      refresh: () => (this.lblCntParticipantes.innerHTML = "0"),
+    }) as HTMLLabelElement;
+    this.btNueva = this.crearHTMLButtonElement("btNueva", {
       onclick: () => {
-        if (!this.equipo.dataOk()) alert("Revise los datos en rojo");
-        else
-          this.controlador?.registrarEquipo({
-            equipo: {
-              nombre: this.nombre,
-              lider: this.lider,
-              cedula2: this.cedula2,
-              cedula3: this.cedula3,
-              cedula4: this.cedula4,
-              cedula5: this.cedula5,
-              proyectoA: this.proyectoA,
-              proyectoB: this.proyectoB,
-            },
-            callback: (error: string) => {
-              if (error) alert(error);
-              else {
-                alert("Integrantes registrados");
-                this.selNombre.value = "";
-                this.inLider.value = "";
-                this.inCedula2.value = "";
-                this.inCedula3.value = "";
-                this.inCedula4.value = "";
-                this.inCedula5.value = "";
-                this.selProyectoA.value = "";
-                this.selProyectoB.value = "";
-                this.equipo = new Cl_mEquipo();
-              }
-              this.refresh();
-            },
-          });
-      },
-    });
-    this.btEquipos = this.crearHTMLButtonElement("btEquipos", {
-      onclick: () => {
-        this.controlador?.infoEquipos(
-          ({
-            error,
-            equipos,
-          }: {
-            error: string | false;
-            equipos: iEquipo[];
-          }) => {
+        let nombre, fecha, descripcion;
+        nombre = prompt("Ingrese el nombre de la actividad");
+        if (nombre) fecha = prompt("Ingrese la fecha (aaaa-mm-dd)");
+        if (nombre && fecha) descripcion = prompt("Ingrese la descripcion");
+        if (!nombre || !fecha || !descripcion) return;
+        let actividad = new Cl_mActividad({ nombre, fecha, descripcion });
+        this.controlador?.nuevaActividad({
+          actividad: {
+            nombre: actividad.nombre,
+            fecha: actividad.fecha,
+            descripcion: actividad.descripcion,
+          },
+          callback: (error: string) => {
             if (error) alert(error);
-            else {
-              let msg = "",
-                i = 1;
-              equipos.map((equipo) => {
-                msg += `${i++}. ${equipo.nombre}: ${equipo.lider}, ${
-                  equipo.cedula2
-                }, ${equipo.cedula3}, ${equipo.cedula4}, ${equipo.cedula5}, (${
-                  equipo.proyectoA
-                }, ${equipo.proyectoB})\n`;
-              });
-              alert(msg);
-            }
-          }
-        );
+            else alert("Se registró la actividad");
+            this.refresh();
+          },
+        });
       },
     });
-    this.equipo = new Cl_mEquipo();
+    this.actividad = new Cl_mActividad();
     this.refresh();
-  }
-  get nombre() {
-    return this.selNombre.value;
-  }
-  get lider() {
-    return +this.inLider.value;
-  }
-  get cedula2() {
-    return +this.inCedula2.value;
-  }
-  get cedula3() {
-    return +this.inCedula3.value;
-  }
-  get cedula4() {
-    return +this.inCedula4.value;
-  }
-  get cedula5() {
-    return +this.inCedula5.value;
-  }
-  get proyectoA() {
-    return this.selProyectoA.value;
-  }
-  get proyectoB() {
-    return this.selProyectoB.value;
   }
 }

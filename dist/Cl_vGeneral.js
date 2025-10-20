@@ -3,6 +3,7 @@ export const tHTMLElement = {
     INPUT: "input",
     SELECT: "select",
     BUTTON: "button",
+    LABEL: "label",
 };
 Object.freeze(tHTMLElement);
 export default class Cl_vGeneral {
@@ -35,7 +36,7 @@ export default class Cl_vGeneral {
     refresh() {
         this.objects.forEach((element) => element.refresh());
     }
-    crearHTMLElement(elementName, { isForm = false, type = tHTMLElement.CONTAINER, onclick, onchange = () => { }, refresh = () => { }, } = {
+    crearHTMLElement(elementName, { isForm = false, type = tHTMLElement.CONTAINER, onclick = () => { }, onchange = () => { }, refresh = () => { }, } = {
         isForm: false,
         type: tHTMLElement.CONTAINER,
         onclick: () => { },
@@ -51,6 +52,8 @@ export default class Cl_vGeneral {
             domElement = document.getElementById(domElementName);
         else if (type === tHTMLElement.BUTTON)
             domElement = document.getElementById(domElementName);
+        else if (type === tHTMLElement.LABEL)
+            domElement = document.getElementById(domElementName);
         else
             domElement = document.getElementById(domElementName);
         if (!domElement) {
@@ -58,6 +61,7 @@ export default class Cl_vGeneral {
             alert(msg);
             throw new Error(msg);
         }
+        domElement.onclick = onclick;
         domElement.onchange = onchange;
         domElement.refresh = refresh;
         this.objects.push(domElement);
@@ -87,8 +91,10 @@ export default class Cl_vGeneral {
         });
         return domElement;
     }
-    crearHTMLSelectElement(elementName, { elements = [], onchange = () => { }, refresh = () => { }, } = {
+    crearHTMLSelectElement(elementName, { elements = [], valueAttributeName = null, textAttributeName = null, onchange = () => { }, refresh = () => { }, } = {
         elements: [],
+        valueAttributeName: null,
+        textAttributeName: null,
         onchange: () => { },
         refresh: () => { },
     }) {
@@ -100,7 +106,12 @@ export default class Cl_vGeneral {
         if (elements) {
             for (let i = 0; i < elements.length; i++) {
                 let option = document.createElement("option");
-                option.value = option.text = elements[i];
+                option.value = valueAttributeName
+                    ? elements[i][valueAttributeName]
+                    : elements[i];
+                option.text = textAttributeName
+                    ? elements[i][textAttributeName]
+                    : elements[i];
                 domElement.add(option);
             }
         }

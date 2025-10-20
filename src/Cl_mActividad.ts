@@ -7,18 +7,31 @@ export enum estadoActividad {
   CANCELADA = "Cancelada",
 }
 export interface iActividad {
+  id?: number | null;
+  creadoEl?: Date | null;
   nombre: string;
   fecha: string;
-  descripcion: string | false;
-  estado: estadoActividad;
+  descripcion: string;
+  estado?: estadoActividad;
 }
 export default class Cl_mActividad {
+  private _id: number | null = null;
+  private _creadoEl: string | null = null;
   private _nombre: string = "";
   private _fecha: string = formatearFecha(new Date());
-  private _descripcion: string | false = "";
+  private _descripcion: string = "";
   private _estado: estadoActividad = estadoActividad.PENDIENTE;
   constructor(
-    { nombre, fecha, descripcion, estado }: iActividad = {
+    {
+      id,
+      creadoEl,
+      nombre,
+      fecha,
+      descripcion,
+      estado = estadoActividad.PENDIENTE,
+    }: iActividad = {
+      id: null,
+      creadoEl: null,
       nombre: "",
       fecha: formatearFecha(new Date()),
       descripcion: "",
@@ -30,8 +43,20 @@ export default class Cl_mActividad {
     this.descripcion = descripcion;
     this.estado = estado;
   }
+  set id(id: number | null) {
+    this._id = id ? +id : null;
+  }
+  get id() {
+    return this._id;
+  }
+  set creadoEl(creadoEl: string | null) {
+    this._creadoEl = creadoEl;
+  }
+  get creadoEl() {
+    return this._creadoEl;
+  }
   set nombre(nombre: string) {
-    this._nombre = nombre;
+    this._nombre = nombre.trim();
   }
   get nombre() {
     return this._nombre;
@@ -42,11 +67,10 @@ export default class Cl_mActividad {
   get fecha() {
     return this._fecha;
   }
-  set descripcion(descripcion: string | false) {
-    this._descripcion = descripcion;
+  set descripcion(descripcion: string) {
+    this._descripcion = descripcion.trim();
   }
-  get descripcion(): string | false {
-    if (this._descripcion === "") return false;
+  get descripcion(): string {
     return this._descripcion;
   }
   set estado(estado: estadoActividad) {
@@ -57,6 +81,8 @@ export default class Cl_mActividad {
   }
   toJSON() {
     return {
+      id: this._id,
+      creadoEl: this._creadoEl,
       nombre: this._nombre,
       fecha: this._fecha,
       descripcion: this._descripcion,

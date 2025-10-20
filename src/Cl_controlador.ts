@@ -1,4 +1,4 @@
-import Cl_mEquipo, { iEquipo } from "./Cl_mActividad.js";
+import Cl_mActividad, { iActividad } from "./Cl_mActividad.js";
 import Cl_mActividades from "./Cl_mActividades.js";
 import Cl_vActividades from "./Cl_vActividades.js";
 
@@ -9,21 +9,26 @@ export default class Cl_controlador {
     this.modelo = modelo;
     this.vista = vista;
   }
-  registrarEquipo({
-    equipo,
+  nuevaActividad({
+    actividad,
     callback,
   }: {
-    equipo: iEquipo;
+    actividad: iActividad;
     callback: Function;
   }): void {
-    this.modelo.registrarEquipo({
-      equipo,
+    this.modelo.add({
+      actividad,
       callback,
     });
   }
-  infoEquipos(callback: Function) {
-    this.modelo.infoEquipos((error: string | false, equipos: iEquipo[]) => {
-      callback({ error, equipos });
-    });
+  actividad(index: number): Cl_mActividad {
+    return this.modelo.actividades[index];
+  }
+  infoActividades(): iActividad[] {
+    let actividades: iActividad[] = [];
+    this.modelo.actividades.map((actividad) =>
+      actividades.push(actividad.toJSON())
+    );
+    return actividades;
   }
 }
