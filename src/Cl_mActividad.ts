@@ -8,7 +8,7 @@ export enum estadoActividad {
 }
 export interface iActividad {
   id?: number | null;
-  creadoEl?: Date | null;
+  creadoEl?: string | null;
   nombre: string;
   fecha: string;
   descripcion: string;
@@ -38,19 +38,21 @@ export default class Cl_mActividad {
       estado: estadoActividad.PENDIENTE,
     }
   ) {
+    this.id = id;
+    this.creadoEl = creadoEl;
     this.nombre = nombre;
     this.fecha = fecha;
     this.descripcion = descripcion;
     this.estado = estado;
   }
-  set id(id: number | null) {
+  set id(id: number | null | undefined) {
     this._id = id ? +id : null;
   }
   get id() {
     return this._id;
   }
-  set creadoEl(creadoEl: string | null) {
-    this._creadoEl = creadoEl;
+  set creadoEl(creadoEl: string | null | undefined) {
+    this._creadoEl = creadoEl ?? null;
   }
   get creadoEl() {
     return this._creadoEl;

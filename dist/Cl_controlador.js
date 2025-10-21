@@ -1,3 +1,4 @@
+import Cl_mActividad from "./Cl_mActividad.js";
 export default class Cl_controlador {
     constructor(modelo, vista) {
         this.modelo = modelo;
@@ -9,8 +10,8 @@ export default class Cl_controlador {
             callback,
         });
     }
-    actividad(index) {
-        return this.modelo.actividades[index];
+    actividadId(id) {
+        return this.modelo.actividadId(id) || new Cl_mActividad();
     }
     infoActividades() {
         let actividades = [];

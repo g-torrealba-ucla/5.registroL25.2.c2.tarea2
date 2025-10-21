@@ -22,6 +22,8 @@ export default class Cl_mActividad {
         this._fecha = formatearFecha(new Date());
         this._descripcion = "";
         this._estado = estadoActividad.PENDIENTE;
+        this.id = id;
+        this.creadoEl = creadoEl;
         this.nombre = nombre;
         this.fecha = fecha;
         this.descripcion = descripcion;
@@ -34,7 +36,7 @@ export default class Cl_mActividad {
         return this._id;
     }
     set creadoEl(creadoEl) {
-        this._creadoEl = creadoEl;
+        this._creadoEl = creadoEl !== null && creadoEl !== void 0 ? creadoEl : null;
     }
     get creadoEl() {
         return this._creadoEl;

@@ -9,34 +9,37 @@ export default class Cl_vActividades extends Cl_vGeneral {
   private lblDescripcion: HTMLLabelElement;
   private lblEstado: HTMLLabelElement;
   private lblCntParticipantes: HTMLLabelElement;
-  private actividad: Cl_mActividad;
+  private actividad: Cl_mActividad | null = null;
   constructor() {
     super({ formName: "infoActividadForm" });
     this.selActividad = this.crearHTMLSelectElement("selActividad", {
-      elements: this.controlador?.infoActividades(),
+      elementsSource: this.controlador?.infoActividades(),
       valueAttributeName: "id",
-      textAttributeName: "nombre",
+      textExpresion: (actividad: iActividad) => {
+        return `${actividad.fecha}: ${actividad.nombre}`;
+      },
       onchange: () => {
-        this.actividad.nombre = this.selActividad.value;
+        this.actividad =
+          this.controlador?.actividadId(this.actividadId) ?? null;
         this.refresh();
       },
     });
     this.lblNombre = this.crearHTMLElement("lblNombre", {
       type: tHTMLElement.LABEL,
-      refresh: () => (this.lblNombre.innerHTML = this.actividad.nombre),
+      refresh: () => (this.lblNombre.innerHTML = this.actividad?.nombre ?? ""),
     }) as HTMLLabelElement;
     this.lblFecha = this.crearHTMLElement("lblFecha", {
       type: tHTMLElement.LABEL,
-      refresh: () => (this.lblFecha.innerHTML = this.actividad.fecha),
+      refresh: () => (this.lblFecha.innerHTML = this.actividad?.fecha ?? ""),
     }) as HTMLLabelElement;
     this.lblDescripcion = this.crearHTMLElement("lblDescripcion", {
       type: tHTMLElement.LABEL,
       refresh: () =>
-        (this.lblDescripcion.innerHTML = this.actividad.descripcion),
+        (this.lblDescripcion.innerHTML = this.actividad?.descripcion ?? ""),
     }) as HTMLLabelElement;
     this.lblEstado = this.crearHTMLElement("lblEstado", {
       type: tHTMLElement.LABEL,
-      refresh: () => (this.lblEstado.innerHTML = this.actividad.estado),
+      refresh: () => (this.lblEstado.innerHTML = this.actividad?.estado ?? ""),
     }) as HTMLLabelElement;
     this.lblCntParticipantes = this.crearHTMLElement("lblCntParticipantes", {
       type: tHTMLElement.LABEL,
@@ -64,7 +67,18 @@ export default class Cl_vActividades extends Cl_vGeneral {
         });
       },
     });
-    this.actividad = new Cl_mActividad();
-    this.refresh();
+    this.actividad = null;
+  }
+  get actividadId(): number {
+    return +this.selActividad.value;
+  }
+  refill() {
+    let infoActividades = this.controlador?.infoActividades();
+    if (!infoActividades?.length) return;
+    this.selActividad.refill(infoActividades);
+    if (!this.actividad)
+      this.actividad = this.controlador?.actividadId(this.actividadId) ?? null;
+    this.selActividad.value = this.actividad?.id?.toString() ?? "";
+    super.refresh();
   }
 }

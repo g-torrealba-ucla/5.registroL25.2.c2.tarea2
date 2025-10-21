@@ -91,10 +91,14 @@ export default class Cl_vGeneral {
         });
         return domElement;
     }
-    crearHTMLSelectElement(elementName, { elements = [], valueAttributeName = null, textAttributeName = null, onchange = () => { }, refresh = () => { }, } = {
-        elements: [],
+    crearHTMLSelectElement(elementName, { elementsSource = [], valueAttributeName = null, textExpresion = (text) => {
+        return text;
+    }, onchange = () => { }, refresh = () => { }, } = {
+        elementsSource: [],
         valueAttributeName: null,
-        textAttributeName: null,
+        textExpresion: (text) => {
+            return text;
+        },
         onchange: () => { },
         refresh: () => { },
     }) {
@@ -103,18 +107,20 @@ export default class Cl_vGeneral {
             onchange,
             refresh,
         });
-        if (elements) {
-            for (let i = 0; i < elements.length; i++) {
-                let option = document.createElement("option");
-                option.value = valueAttributeName
-                    ? elements[i][valueAttributeName]
-                    : elements[i];
-                option.text = textAttributeName
-                    ? elements[i][textAttributeName]
-                    : elements[i];
-                domElement.add(option);
+        domElement.refill = (elementsSource) => {
+            domElement.innerHTML = "";
+            if (elementsSource) {
+                for (let i = 0; i < elementsSource.length; i++) {
+                    let option = document.createElement("option");
+                    option.value = valueAttributeName
+                        ? elementsSource[i][valueAttributeName]
+                        : elementsSource[i];
+                    option.text = textExpresion(elementsSource[i]);
+                    domElement.add(option);
+                }
             }
-        }
+        };
+        domElement.refill(elementsSource);
         return domElement;
     }
     show({ ver = true } = { ver: true }) {

@@ -14,10 +14,12 @@ export default class Cl_mActividades {
   public actividades: Cl_mActividad[];
   private db: Cl_dcytDb;
   readonly tbActividades: string = "L25.2.actividades";
-  constructor(callback: Function) {
+  constructor() {
     this.db = new Cl_dcytDb({ aliasCuenta: "PROFESOR" });
     this.actividades = [];
-    this.cargar((error: string | false) => callback(error));
+  }
+  actividadId(id: number): Cl_mActividad | null {
+    return this.actividades.find((actividad) => actividad.id === id) || null;
   }
   add({
     actividad,

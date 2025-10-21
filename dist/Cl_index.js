@@ -3,7 +3,8 @@ import Cl_mActividades from "./Cl_mActividades.js";
 import Cl_vActividades from "./Cl_vActividades.js";
 export default class Cl_index {
     constructor() {
-        let modelo = new Cl_mActividades((error) => {
+        let modelo = new Cl_mActividades();
+        modelo.cargar((error) => {
             if (error)
                 alert(error);
             if (error)
@@ -11,6 +12,7 @@ export default class Cl_index {
             let vista = new Cl_vActividades();
             let controlador = new Cl_controlador(modelo, vista);
             vista.controlador = controlador;
+            vista.refill();
         });
     }
 }

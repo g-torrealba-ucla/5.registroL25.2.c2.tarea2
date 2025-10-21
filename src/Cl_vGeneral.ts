@@ -1,5 +1,8 @@
 import Cl_controlador from "./Cl_controlador.js";
 declare global {
+  interface HTMLSelectElement {
+    refill: (elementsSource: any[] | undefined) => void;
+  }
   interface HTMLElement {
     refresh: () => void;
   }
@@ -141,21 +144,25 @@ export default class Cl_vGeneral {
   crearHTMLSelectElement(
     elementName: string,
     {
-      elements = [],
+      elementsSource = [],
       valueAttributeName = null,
-      textAttributeName = null,
+      textExpresion = (text: {}) => {
+        return text;
+      },
       onchange = () => {},
       refresh = () => {},
     }: {
-      elements?: any[];
+      elementsSource?: any[];
       valueAttributeName?: string | null;
-      textAttributeName?: string | null;
+      textExpresion?: Function;
       onchange?: () => void;
       refresh?: () => void;
     } = {
-      elements: [],
+      elementsSource: [],
       valueAttributeName: null,
-      textAttributeName: null,
+      textExpresion: (text: {}) => {
+        return text;
+      },
       onchange: () => {},
       refresh: () => {},
     }
@@ -165,18 +172,20 @@ export default class Cl_vGeneral {
       onchange,
       refresh,
     }) as HTMLSelectElement;
-    if (elements) {
-      for (let i = 0; i < elements.length; i++) {
-        let option = document.createElement("option");
-        option.value = valueAttributeName
-          ? elements[i][valueAttributeName]
-          : elements[i];
-        option.text = textAttributeName
-          ? elements[i][textAttributeName]
-          : elements[i];
-        domElement.add(option);
+    domElement.refill = (elementsSource: any[] | undefined) => {
+      domElement.innerHTML = "";
+      if (elementsSource) {
+        for (let i = 0; i < elementsSource.length; i++) {
+          let option = document.createElement("option");
+          option.value = valueAttributeName
+            ? elementsSource[i][valueAttributeName]
+            : elementsSource[i];
+          option.text = textExpresion(elementsSource[i]);
+          domElement.add(option);
+        }
       }
-    }
+    };
+    domElement.refill(elementsSource);
     return domElement;
   }
   show({ ver = true }: { ver?: boolean } = { ver: true }): void {

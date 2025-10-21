@@ -21,8 +21,8 @@ export default class Cl_controlador {
       callback,
     });
   }
-  actividad(index: number): Cl_mActividad {
-    return this.modelo.actividades[index];
+  actividadId(id: number): Cl_mActividad {
+    return this.modelo.actividadId(id)|| new Cl_mActividad();
   }
   infoActividades(): iActividad[] {
     let actividades: iActividad[] = [];

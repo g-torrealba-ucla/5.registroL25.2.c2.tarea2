@@ -1,11 +1,13 @@
 import Cl_dcytDb from "https://gtplus.net/forms2/dcytDb/api/Cl_dcytDb.php";
 import Cl_mActividad from "./Cl_mActividad.js";
 export default class Cl_mActividades {
-    constructor(callback) {
+    constructor() {
         this.tbActividades = "L25.2.actividades";
         this.db = new Cl_dcytDb({ aliasCuenta: "PROFESOR" });
         this.actividades = [];
-        this.cargar((error) => callback(error));
+    }
+    actividadId(id) {
+        return this.actividades.find((actividad) => actividad.id === id) || null;
     }
     add({ actividad, callback, }) {
         this.db.addRecord({
